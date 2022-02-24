@@ -81,16 +81,29 @@ const persons = [
 }
 ]
 
-router.post('/check', function(req , res){
-let votingAge = req.query.votingAge
-let peoplevotes = persons.filter(ele => ele.age > votingAge)
-console.log(peoplevotes)
+router.post("/election", function (req, res) {
+    let votingAge = req.query.votingAge
 
+    let arr=[];
+    for (let i = 0; i < persons.length; i++) {
 
-
-
+        if (persons[i].age > votingAge) {
+        
+            persons[i].votingStatus = true
+            arr.push(persons[i])
+        }
+    }
+if (arr.length>0)
+{
+    return res.send(arr)
+}
+else{
+    return res.send("no member found above this age")
+}
 
 })
+
+
 
 
 module.exports = router;
