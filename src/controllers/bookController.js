@@ -33,34 +33,38 @@ const getBooksInYear = async (request, response)=>{
     });
 }
 
-const getParticularBooks = async (request, response)=>{
-    const data = request.body; 
-    const dataRes = await BookModel.find(data).select({
-        'bookName': 1,
-        '_id': 0
-    }); 
-    response.send({
-        msg: dataRes
-    });
+const getParticularBooks = async function(req,res){
+    let condn = req.body;
+    if("bookName" in condn){
+        let particularBooks = await BookModel.find({ bookName: {$regex : condn.bookName}})
+        return res.send(particularBooks)
+    }
+    else if ("authorName" in condn){
+        let particularBooks = await BookModel.find({ authorName: {$regex : condn.authorName}})
+        return res.send(particularBooks)
+    }
+    else if ("tags" in condn){
+        if(condn.tags in BookModel.tags){
+            let particularBooks = await BookModel.find({tags : condn.tags})
+            return res.send(particularBooks)
+        }
+    }
+    else if ("prices" in condn){
+        if ("indianPrice" in condn.prices){
+            let particularBooks = await BookModel.find({"prices.indianPrice" : condn.prices.indianPrice})
+            return res.send(particularBooks)
+        }
+        else if ("europePrice" in condn.prices){
+            let particularBooks = await BookModel.find({"prices.europePrice" : condn.prices.europePrice})
+            return res.send(particularBooks)
+        }
+    }
+    else {
+        let particularBooks = await BookModel.find(condn)
+        return res.send(particularBooks)
+    }
 }
 
-// const getXINRBooks = async (request, response)=>{
-//     const dataRes = await BookModel.find({
-//         $or: [
-//             {
-//                 "prices.indianPrice": "100 INR"
-//             },
-//             {
-//                 "prices.indianPrice": "200 INR"
-//             },
-//             {
-//                 "prices.indianPrice": "500 INR"
-//             },
-//         ]
-//     }); 
-//     response.send({
-//         msg: dataRes
-//     });
 
 
     const getXINRBooks = async function(req,res){
@@ -68,22 +72,7 @@ const getParticularBooks = async (request, response)=>{
     res.send(xinrBooks)
 }
 
-// const getRandomBooks = async (request, response)=>{
-//     const dataRes = await BookModel.find({
-//         $and: [
-//             {
-//                 'totalPages':{
-//                     $gt: 500
-//                 }
-//             },
-//             {
-//                 'stockAvailable': true
-//             }
-//         ]
-//     }); 
-//     response.send({
-//         msg: dataRes
-//     });
+
 
     const getRandomBooks = async function(req,res){
         let randomBooks = await BookModel.find({ $or:[{stockAvailable:true},{totalPages: {$gt:500}}]})
