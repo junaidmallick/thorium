@@ -37,7 +37,7 @@ const createBook= async function (req, res) {
     }
     else {
         return  res.send({error: "author id is required"})
-    }  
+    }
 }
 
 
@@ -47,6 +47,50 @@ const getBooksData= async function (req, res) {
 }
 
 
+// const updateHardCover = async function (req, res){
+
+//     let data = req.body
+
+//     let books = await bookModel.find().populate("publisher")
+
+        
+//     let booksByPublisher = books.filter(ele => (ele.publisher.name == "Penguin") || (ele.publisher.name == "HarperCollins")) 
+
+//     let booksName = booksByPublisher.map(x => x.name)
+//     console.log(booksName)
+
+//     let updatedCover = []
+
+//     for (let i=0; i<booksName.length;  i++){
+//         let element = booksName[i]
+//         let updateData = await bookModel.findOneAndUpdate({name : element}, {$set : data}, {new : true})
+//         updatedCover.push(updateData)
+//     }
+//     res.send({updatedCover : updatedCover})
+// }
+
+
+const putBook= async function (req,res){
+    const update = await bookModel.updateMany({$or: [{"newPublisher5":"6220eea3812885104baa971a" },{"newPublisher5": "6220ee47812885104baa9714"}]},{"isHardCover": true},{new:true})
+    res.send("changes Updated")
+  }
+
+
+
+
+
+
+const increaseSale= async function (req, res) {
+    let increasePrice = await bookModel.updateMany({ratings:{$gt:3.5}},{$inc : {price: +10}});
+  
+    res.send({msg: "Price Changed successfully Check your Database for updated price"})
+}
+
+
+
 
 module.exports.createBook= createBook
 module.exports.getBooksData= getBooksData
+module.exports.putBook= putBook
+//module.exports.updateHardCover = updateHardCover
+module.exports.increaseSale = increaseSale
