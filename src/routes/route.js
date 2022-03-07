@@ -1,41 +1,21 @@
 const express = require('express');
+
 const router = express.Router();
-// const UserModel= require("../models/userModel.js")
-const UserController= require("../controllers/userController")
-const BookController= require("../controllers/bookController")
+const productController = require('../controllers/productController');
+const userController = require('../controllers/userController');
+const userMiddlewares = require('../middleware/userMiddleware');
+const orderController = require('../controllers/orderController')
 
-router.get("/test-me", function (req, res) {
-    res.send("My first ever api!")
-})
+//  POST api to create a product
 
-router.post("/createUser", UserController.createUser  )
+router.post('/createProduct', productController.creatProduct)
 
-router.get("/getUsersData", UserController.getUsersData)
+//   POST api to create a user that takes user details from the request body.
 
-router.post("/createBook", BookController.createBook  )
+router.post('/createUser', userMiddlewares.userMid1, userController.creatUser)
 
-router.get("/getBooksData", BookController.getBooksData)
+// POST api for order purchase that takes a userId and a productId in request body
 
-router.post("/updateBooks", BookController.updateBooks)
-router.post("/deleteBooks", BookController.deleteBooks)
-
-//MOMENT JS
-const moment = require('moment');
-router.get("/dateManipulations", function (req, res) {
-    
-    // const today = moment();
-    // let x= today.add(10, "days")
-
-    // let validOrNot= moment("29-02-1991", "DD-MM-YYYY").isValid()
-    // console.log(validOrNot)
-    
-    const dateA = moment('01-01-1900', 'DD-MM-YYYY');
-    const dateB = moment('01-01-2000', 'DD-MM-YYYY');
-
-    let x= dateB.diff(dateA, "days")
-    console.log(x)
-
-    res.send({ msg: "all good"})
-})
+router.post('/orders', userMiddlewares.userMid1, orderController.createOrder);
 
 module.exports = router;
